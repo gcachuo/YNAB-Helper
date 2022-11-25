@@ -6,6 +6,13 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "extra": {
+      "ENV": "DEV",
+      "BASE_URL": {
+        "LOCAL": "http://127.0.0.1:8000/api/",
+        "DEV": "https://api.youneedabudget.com/v1/"
+      }
+    },
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
