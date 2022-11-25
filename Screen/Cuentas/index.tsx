@@ -25,7 +25,18 @@ export default function Cuentas() {
     setRefresh(true);
     BudgetsAPI.Accounts(budgetId)
       .then((value) => {
-        setAccounts(value);
+        value = value.sort((a, b) => {
+          return b.balance - a.balance;
+        });
+
+        const onBudget = value.filter((account) => {
+          return account.on_budget;
+        });
+        const offBudget = value.filter((account) => {
+          return !account.on_budget;
+        });
+
+        setAccounts(onBudget);
       })
       .finally(() => {
         setRefresh(false);
@@ -39,31 +50,24 @@ export default function Cuentas() {
         <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
       }
     >
-      {accounts
-        .filter((account) => {
-          return account.on_budget;
-        })
-        .sort((a, b) => {
-          return b.balance - a.balance;
-        })
-        .map((account) => (
-          <Card key={account.id} style={{ marginVertical: 10 }}>
-            <Card.Title
-              title={account.name}
-              subtitle={
-                {
-                  checking: "Débito",
-                  savings: "Ahorro",
-                  cash: "Efectivo",
-                  creditCard: "Crédito",
-                }[account.type] ?? account.type
-              }
-            />
-            <Card.Content>
-              <Title>{numeral(account.balance / 1000).format("$#,#.##")}</Title>
-            </Card.Content>
-          </Card>
-        ))}
+      {accounts.map((account) => (
+        <Card key={account.id} style={{ marginVertical: 10 }}>
+          <Card.Title
+            title={account.name}
+            subtitle={
+              {
+                checking: "Débito",
+                savings: "Ahorro",
+                cash: "Efectivo",
+                creditCard: "Crédito",
+              }[account.type] ?? account.type
+            }
+          />
+          <Card.Content>
+            <Title>{numeral(account.balance / 1000).format("$#,#.##")}</Title>
+          </Card.Content>
+        </Card>
+      ))}
     </ScrollView>
   );
 }
