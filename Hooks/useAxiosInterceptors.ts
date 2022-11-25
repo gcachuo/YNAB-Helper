@@ -2,10 +2,9 @@ import { useEffect } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import Toast from "react-native-root-toast";
 import Constants from "expo-constants";
+import accessToken from "../accesstoken.env";
 
 export default function useAxiosInterceptors() {
-  const accessToken = "";
-
   useEffect(() => {
     const requestInterceptor = axios.interceptors.request.use(
       async (request) => {
