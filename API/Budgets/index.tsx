@@ -7,6 +7,8 @@ export interface IAccounts {
   balance: number;
   on_budget: boolean;
   type: string;
+  deleted: boolean;
+  closed: boolean;
 }
 
 export default class BudgetsAPI {
