@@ -51,9 +51,8 @@ function AccountList(props: { onBudget: boolean }) {
   }
 
   function fetchAccounts() {
-    const budgetId = "bfdc3ba1-6f6e-4c07-a3ed-9e8fd4f2f5e0";
     setRefresh(true);
-    BudgetsAPI.Accounts(budgetId)
+    BudgetsAPI.Accounts()
       .then((value) => {
         value = value.sort((a, b) => {
           return b.balance - a.balance;
