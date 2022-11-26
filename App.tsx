@@ -1,20 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import "react-native-gesture-handler";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { NavigationContainer } from "@react-navigation/native";
+
+import useAxiosInterceptors from "./Hooks/useAxiosInterceptors";
+import Cuentas from "./Screen/Cuentas";
+import Presupuesto from "./Screen/Presupuesto";
+
+const Drawer = createDrawerNavigator();
 
 export default function App() {
+  useAxiosInterceptors();
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Drawer.Navigator>
+        <Drawer.Screen name="Cuentas" component={Cuentas} />
+        <Drawer.Screen name="Presupuesto" component={Presupuesto} />
+      </Drawer.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
