@@ -25,6 +25,10 @@ export interface ICategory {
   }[];
 }
 
+export interface IMonth {
+  to_be_budgeted: number;
+}
+
 export default class BudgetsAPI {
   static budgetId = "last-used";
 
@@ -50,5 +54,14 @@ export default class BudgetsAPI {
     // console.log(response.data.data.category_groups[0].categories);
 
     return response.data.data.category_groups;
+  }
+
+  static async Months() {
+    const month = `current`;
+    const uri = `budgets/${this.budgetId}/months/${month}`;
+    const response = (await axios.get(uri)) as AxiosResponse<
+      ApiResponse<{ month: IMonth }>
+    >;
+    return response.data.data.month;
   }
 }
