@@ -26,7 +26,7 @@ export default function useAxiosInterceptors() {
           }
         }
 
-        return request;
+        return null;
       }
     );
 

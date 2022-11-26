@@ -12,9 +12,7 @@ export default function Presupuesto() {
 
   useFocusEffect(
     useCallback(() => {
-      setRefresh(true);
-      fetchBudget();
-      fetchCash();
+      onRefresh();
     }, [])
   );
 
