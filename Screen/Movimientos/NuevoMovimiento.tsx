@@ -3,21 +3,37 @@ import { Button, Surface, TextInput } from "react-native-paper";
 import BudgetsAPI, { IAccounts, ICategory } from "../../API/Budgets";
 import { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
+import { useNavigation } from "@react-navigation/native";
+import Toast from "react-native-root-toast";
 
 export default function NuevoMovimiento() {
   const [transaction, setTransaction] = useState(
     {} as {
-      accountId: "";
-      categoryId: "";
-      payeeId: "";
-      amount: 0;
+      accountId: string;
+      categoryId: string;
+      payeeId: string;
+      payeeName: string;
+      amount: number;
     }
   );
   const [accounts, setAccounts] = useState([] as IAccounts[]);
   const [categories, setCategories] = useState([] as ICategory[]);
+  const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
 
-  function saveTransaction() {
-    BudgetsAPI.Transactions(transaction);
+  async function saveTransaction() {
+    setLoading(true);
+    transaction.amount = transaction.amount * 1000;
+    BudgetsAPI.Transactions(transaction)
+      .then(() => {
+        navigation.goBack();
+      })
+      .catch((error) => {
+        Toast.show(error.response.data.error.detail);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }
 
   useEffect(() => {
@@ -65,8 +81,18 @@ export default function NuevoMovimiento() {
               ))
           )}
         </Picker>
-        <TextInput label={"Cantidad"} keyboardType={"numeric"} />
+        <TextInput
+          label={"Cantidad"}
+          keyboardType={"numeric"}
+          value={transaction.amount?.toString()}
+          onChangeText={(text) => {
+            transaction.amount = text;
+            setTransaction({ ...transaction });
+          }}
+        />
         <Button
+          loading={loading}
+          enabled={!loading}
           mode={"contained"}
           onPress={() => {
             saveTransaction();

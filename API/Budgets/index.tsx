@@ -71,6 +71,7 @@ export default class BudgetsAPI {
     amount: number;
     categoryId: string;
     payeeId: string;
+    payeeName: string;
   }) {
     const uri = `budgets/${this.budgetId}/transactions`;
     const response = (await axios.post(uri, {
@@ -80,6 +81,7 @@ export default class BudgetsAPI {
         amount:transaction.amount,
         category_id: transaction.categoryId,
         payee_id: transaction.payeeId,
+        payee_name: transaction.payeeName,
         memo: "App",
         approved: true
       }
