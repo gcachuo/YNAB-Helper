@@ -52,35 +52,6 @@ export default function NuevoMovimiento() {
   return (
     <ScrollView>
       <Surface style={{ padding: 20 }}>
-        <Picker
-          selectedValue={transaction.accountId}
-          onValueChange={(itemValue, itemIndex) => {
-            transaction.accountId = itemValue;
-            setTransaction({ ...transaction });
-          }}
-        >
-          {accounts.map((item) => (
-            <Picker.Item label={item.name} value={item.id} />
-          ))}
-        </Picker>
-        <Picker
-          selectedValue={transaction.categoryId}
-          onValueChange={(itemValue, itemIndex) => {
-            transaction.categoryId = itemValue;
-            setTransaction({ ...transaction });
-          }}
-        >
-          {categories.map((item) =>
-            item.categories
-              .filter((item) => item.name !== "Uncategorized")
-              .map((sub) => (
-                <Picker.Item
-                  label={`(${item.name}) ${sub.name}`}
-                  value={sub.id}
-                />
-              ))
-          )}
-        </Picker>
         <TextInput
           label={"Beneficiario"}
           value={transaction.payeeName}
@@ -98,6 +69,36 @@ export default function NuevoMovimiento() {
             setTransaction({ ...transaction });
           }}
         />
+        <Picker
+          selectedValue={transaction.accountId}
+          onValueChange={(itemValue, itemIndex) => {
+            transaction.accountId = itemValue;
+            setTransaction({ ...transaction });
+          }}
+        >
+          {accounts.map((item) => (
+            <Picker.Item label={item.name} value={item.id} key={item.id} />
+          ))}
+        </Picker>
+        <Picker
+          selectedValue={transaction.categoryId}
+          onValueChange={(itemValue, itemIndex) => {
+            transaction.categoryId = itemValue;
+            setTransaction({ ...transaction });
+          }}
+        >
+          {categories.map((item) =>
+            item.categories
+              .filter((item) => item.name !== "Uncategorized")
+              .map((sub) => (
+                <Picker.Item
+                  label={`(${item.name}) ${sub.name}`}
+                  value={sub.id}
+                  key={item.id}
+                />
+              ))
+          )}
+        </Picker>
         <Button
           loading={loading}
           disabled={loading}
