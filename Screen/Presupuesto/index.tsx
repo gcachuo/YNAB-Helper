@@ -4,6 +4,7 @@ import { List, Surface, Title } from "react-native-paper";
 import BudgetsAPI, { ICategory, IMonth } from "../../API/Budgets";
 import { useFocusEffect } from "@react-navigation/native";
 import numeral from "numeral";
+import FABButton from "../../Components/FAB";
 
 export default function Presupuesto() {
   const [refresh, setRefresh] = useState(false);
@@ -45,49 +46,55 @@ export default function Presupuesto() {
   }
 
   return (
-    <ScrollView
-      style={{ paddingHorizontal: 20 }}
-      refreshControl={
-        <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
-      }
-    >
-      <Surface
-        style={{
-          padding: 20,
-          justifyContent: "center",
-          flexDirection: "row",
-        }}
-        elevation={1}
+    <>
+      <ScrollView
+        style={{ paddingHorizontal: 20 }}
+        refreshControl={
+          <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
+        }
       >
-        <Title> {numeral(month.to_be_budgeted / 1000).format("$#,#.##")}</Title>
-      </Surface>
-      {!!budget.length && (
-        <>
-          {budget
-            .filter(
-              (item) =>
-                item.name !== "Internal Master Category" &&
-                item.name !== "Hidden Categories"
-            )
-            .map((item) => (
-              <List.Accordion title={item.name} key={item.id}>
-                {item.categories.map((subitem) => (
-                  <List.Item
-                    title={subitem.name}
-                    description={`${numeral(subitem.balance / 1000).format(
-                      "$#,#.##"
-                    )} (${numeral(subitem.budgeted / 1000).format(
-                      "$#,#.##"
-                    )} || ${numeral(subitem.activity / 1000).format(
-                      "$#,#.##"
-                    )})`}
-                    key={subitem.id}
-                  />
-                ))}
-              </List.Accordion>
-            ))}
-        </>
-      )}
-    </ScrollView>
+        <Surface
+          style={{
+            padding: 20,
+            justifyContent: "center",
+            flexDirection: "row",
+          }}
+          elevation={1}
+        >
+          <Title>
+            {" "}
+            {numeral(month.to_be_budgeted / 1000).format("$#,#.##")}
+          </Title>
+        </Surface>
+        {!!budget.length && (
+          <>
+            {budget
+              .filter(
+                (item) =>
+                  item.name !== "Internal Master Category" &&
+                  item.name !== "Hidden Categories"
+              )
+              .map((item) => (
+                <List.Accordion title={item.name} key={item.id}>
+                  {item.categories.map((subitem) => (
+                    <List.Item
+                      title={subitem.name}
+                      description={`${numeral(subitem.balance / 1000).format(
+                        "$#,#.##"
+                      )} (${numeral(subitem.budgeted / 1000).format(
+                        "$#,#.##"
+                      )} || ${numeral(subitem.activity / 1000).format(
+                        "$#,#.##"
+                      )})`}
+                      key={subitem.id}
+                    />
+                  ))}
+                </List.Accordion>
+              ))}
+          </>
+        )}
+      </ScrollView>
+      <FABButton />
+    </>
   );
 }

@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { ApiResponse } from "../ApiResponse";
+import moment from "moment";
 
 export interface IAccounts {
   id: string;
@@ -63,5 +64,31 @@ export default class BudgetsAPI {
       ApiResponse<{ month: IMonth }>
     >;
     return response.data.data.month;
+  }
+
+  static async Transactions(transaction:{
+    accountId: string;
+    amount: number;
+    categoryId: string;
+    payeeId: string;
+  }) {
+    const uri = `budgets/${this.budgetId}/transactions`;
+    const response = (await axios.post(uri, {
+      transaction: {
+        date: moment().format('YYYY-MM-DD'),
+        account_id: transaction.accountId,
+        amount:transaction.amount,
+        category_id: transaction.categoryId,
+        payee_id: transaction.payeeId,
+        memo: "App",
+        approved: true
+      }
+    })) as AxiosResponse<
+      ApiResponse<{
+        transaction_ids: string[];
+        transaction: { id: string };
+      }>
+    >;
+    console.log(response.data.data.transaction);
   }
 }

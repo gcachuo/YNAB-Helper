@@ -10,7 +10,7 @@ function FABButton() {
     <FAB
       icon="plus"
       style={styles.fab}
-      onPress={() => navigation.navigate("Presupuesto")}
+      onPress={() => navigation.navigate("NuevoMovimiento")}
     />
   );
 }
