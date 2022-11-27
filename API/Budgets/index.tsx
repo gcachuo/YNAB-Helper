@@ -66,7 +66,7 @@ export default class BudgetsAPI {
     return response.data.data.month;
   }
 
-  static async Transactions(transaction:{
+  static async Transactions(transaction: {
     accountId: string;
     amount: number;
     categoryId: string;
@@ -76,15 +76,15 @@ export default class BudgetsAPI {
     const uri = `budgets/${this.budgetId}/transactions`;
     const response = (await axios.post(uri, {
       transaction: {
-        date: moment().format('YYYY-MM-DD'),
+        date: moment().format("YYYY-MM-DD"),
         account_id: transaction.accountId,
-        amount:transaction.amount,
+        amount: transaction.amount,
         category_id: transaction.categoryId,
-        payee_id: transaction.payeeId,
+        payee_id: transaction.payeeName ? null : transaction.payeeId,
         payee_name: transaction.payeeName,
         memo: "App",
-        approved: true
-      }
+        approved: true,
+      },
     })) as AxiosResponse<
       ApiResponse<{
         transaction_ids: string[];

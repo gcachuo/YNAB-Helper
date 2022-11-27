@@ -82,17 +82,25 @@ export default function NuevoMovimiento() {
           )}
         </Picker>
         <TextInput
+          label={"Beneficiario"}
+          value={transaction.payeeName}
+          onChangeText={(text) => {
+            transaction.payeeName = text;
+            setTransaction({ ...transaction });
+          }}
+        />
+        <TextInput
           label={"Cantidad"}
           keyboardType={"numeric"}
           value={transaction.amount?.toString()}
           onChangeText={(text) => {
-            transaction.amount = text;
+            transaction.amount = +text;
             setTransaction({ ...transaction });
           }}
         />
         <Button
           loading={loading}
-          enabled={!loading}
+          disabled={loading}
           mode={"contained"}
           onPress={() => {
             saveTransaction();
