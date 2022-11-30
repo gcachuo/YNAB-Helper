@@ -4,7 +4,7 @@ import { List, Surface, Title } from "react-native-paper";
 import BudgetsAPI, { ICategory, IMonth } from "../../API/Budgets";
 import { useFocusEffect } from "@react-navigation/native";
 import numeral from "numeral";
-import FABButton from "../../Components/FAB";
+import FABComponent from "../../Components/FABComponent";
 
 export default function Presupuesto() {
   const [refresh, setRefresh] = useState(false);
@@ -62,7 +62,6 @@ export default function Presupuesto() {
           elevation={1}
         >
           <Title>
-            {" "}
             {numeral(month.to_be_budgeted / 1000).format("$#,#.##")}
           </Title>
         </Surface>
@@ -94,7 +93,7 @@ export default function Presupuesto() {
           </>
         )}
       </ScrollView>
-      <FABButton />
+      <FABComponent />
     </>
   );
 }

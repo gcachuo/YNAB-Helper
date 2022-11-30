@@ -5,7 +5,7 @@ import creditCardsJSON from "../../creditcards.env.json";
 
 import BudgetsAPI, { IAccounts } from "../../API/Budgets";
 import { useFocusEffect } from "@react-navigation/native";
-import FABButton from "../../Components/FAB";
+import FABComponent from "../../Components/FABComponent";
 import useAxiosInterceptors from "../../Hooks/useAxiosInterceptors";
 import { BottomNavigation, Card, Paragraph, Title } from "react-native-paper";
 
@@ -129,7 +129,7 @@ function AccountList(props: { onBudget: boolean }) {
           );
         })}
       </ScrollView>
-      <FABButton />
+      <FABComponent />
     </SafeAreaView>
   );
 }

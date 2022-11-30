@@ -4,7 +4,7 @@ import { FAB } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 
-function FABButton() {
+export default function FABComponent() {
   const navigation = useNavigation() as DrawerNavigationProp<any>;
   return (
     <FAB
@@ -23,5 +23,3 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
 });
-
-export default FABButton;
