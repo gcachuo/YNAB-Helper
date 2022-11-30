@@ -35,7 +35,7 @@ export default function NuevoMovimiento(props: {
       : transaction.amount;
     BudgetsAPI.Transactions(transaction)
       .then((result) => {
-        navigation.navigate("Cuentas", { cache: false });
+        navigation.goBack();
       })
       .catch((error) => {
         Toast.show(error.response.data.error.detail);
