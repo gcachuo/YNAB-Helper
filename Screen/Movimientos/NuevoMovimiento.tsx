@@ -6,20 +6,23 @@ import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-root-toast";
 import DateTimePickerComponent from "../../Components/DateTimePickerComponent";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
 
-export default function NuevoMovimiento() {
-  const [transaction, setTransaction] = useState(
-    {} as {
-      accountId: string;
-      categoryId: string;
-      payeeId: string;
-      payeeName: string;
-      amount: number;
-    }
-  );
+export default function NuevoMovimiento(props: {
+  route?: { params?: { accountId?: string } };
+}) {
+  const [transaction, setTransaction] = useState({
+    accountId: props.route?.params?.accountId,
+  } as {
+    accountId: string;
+    categoryId: string;
+    payeeId: string;
+    payeeName: string;
+    amount: number;
+  });
   const [accounts, setAccounts] = useState([] as IAccounts[]);
   const [categories, setCategories] = useState([] as ICategory[]);
-  const navigation = useNavigation();
+  const navigation = useNavigation() as DrawerNavigationProp<any>;
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState("minus");
 
@@ -30,7 +33,7 @@ export default function NuevoMovimiento() {
       : transaction.amount;
     BudgetsAPI.Transactions(transaction)
       .then(() => {
-        navigation.goBack();
+        navigation.navigate("Cuentas", { cache: false });
       })
       .catch((error) => {
         Toast.show(error.response.data.error.detail);
@@ -78,7 +81,9 @@ export default function NuevoMovimiento() {
               buttonColor={type == "minus" ? "red" : ""}
               mode={type == "minus" ? "contained" : "text"}
               onPress={() => {
-                transaction.amount = Math.abs(transaction.amount) * -1;
+                transaction.amount = !isNaN(+transaction.amount)
+                  ? Math.abs(transaction.amount) * -1
+                  : 0;
                 setType("minus");
               }}
             >
@@ -89,7 +94,9 @@ export default function NuevoMovimiento() {
               buttonColor={type == "plus" ? "green" : ""}
               mode={type == "plus" ? "contained" : "text"}
               onPress={() => {
-                transaction.amount = Math.abs(transaction.amount);
+                transaction.amount = !isNaN(+transaction.amount)
+                  ? Math.abs(transaction.amount)
+                  : 0;
                 setType("plus");
               }}
             >

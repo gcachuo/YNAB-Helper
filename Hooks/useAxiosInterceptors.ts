@@ -105,6 +105,14 @@ export default function useAxiosInterceptors() {
                   }
                 );
                 break;
+              case 429:
+                console.warn(
+                  error.response?.status,
+                  error.config?.method?.toUpperCase(),
+                  error.config?.baseURL! + error.config?.url,
+                  error.response.headers["x-rate-limit"]
+                );
+                break;
               case 500:
                 console.log(error.response?.data);
                 Toast.show(
