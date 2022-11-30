@@ -1,12 +1,13 @@
-import { RefreshControl, ScrollView } from "react-native";
+import { RefreshControl, SafeAreaView, ScrollView } from "react-native";
 import { useCallback, useState } from "react";
-import { BottomNavigation, Card, Paragraph, Title } from "react-native-paper";
 import numeral from "numeral";
 import creditCardsJSON from "../../creditcards.env.json";
 
 import BudgetsAPI, { IAccounts } from "../../API/Budgets";
 import { useFocusEffect } from "@react-navigation/native";
 import FABButton from "../../Components/FAB";
+import useAxiosInterceptors from "../../Hooks/useAxiosInterceptors";
+import { BottomNavigation, Card, Paragraph, Title } from "react-native-paper";
 
 export default function Cuentas() {
   const [index, setIndex] = useState(0);
@@ -44,6 +45,7 @@ function AccountList(props: { onBudget: boolean }) {
   const [creditCards, setCreditCards] = useState(
     {} as { [index: string]: { limit: number; name: string } }
   );
+  useAxiosInterceptors();
 
   useFocusEffect(
     useCallback(() => {
@@ -52,9 +54,9 @@ function AccountList(props: { onBudget: boolean }) {
     }, [])
   );
 
-  function onRefresh() {
+  const onRefresh = useCallback(() => {
     fetchAccounts();
-  }
+  }, []);
 
   function fetchAccounts() {
     setRefresh(true);
@@ -82,56 +84,52 @@ function AccountList(props: { onBudget: boolean }) {
   }
 
   return (
-    <>
+    <SafeAreaView>
       <ScrollView
         style={{ paddingHorizontal: 20 }}
         refreshControl={
           <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
         }
       >
-        {!accounts.length ? (
-          <></>
-        ) : (
-          accounts.map((account) => {
-            const accountType =
-              {
-                checking: "Débito",
-                savings: "Ahorro",
-                cash: "Efectivo",
-                creditCard: "Crédito",
-                otherAsset: "Otro",
-                personalLoan: "Préstamo",
-                mortgage: "Hipoteca",
-              }[account.type] ?? account.type;
-            const balance = account.balance / 1000;
+        {accounts.map((account) => {
+          const accountType =
+            {
+              checking: "Débito",
+              savings: "Ahorro",
+              cash: "Efectivo",
+              creditCard: "Crédito",
+              otherAsset: "Otro",
+              personalLoan: "Préstamo",
+              mortgage: "Hipoteca",
+            }[account.type] ?? account.type;
+          const balance = account.balance / 1000;
 
-            return (
-              <Card key={account.id} style={{ marginVertical: 10 }}>
-                <Card.Title title={account.name} subtitle={accountType} />
-                <Card.Content>
-                  <Title
-                    style={{
-                      color: account.balance > 0 ? "#009100" : "#d00000",
-                    }}
-                  >
-                    {numeral(balance).format("$#,#.##")}
-                  </Title>
-                  {account.type === "creditCard" && (
-                    <>
-                      <Paragraph>
-                        {numeral(
-                          creditCards[account.id].limit + balance
-                        ).format("$#,#.##")}
-                      </Paragraph>
-                    </>
-                  )}
-                </Card.Content>
-              </Card>
-            );
-          })
-        )}
+          return (
+            <Card key={account.id} style={{ marginVertical: 10 }}>
+              <Card.Title title={account.name} subtitle={accountType} />
+              <Card.Content>
+                <Title
+                  style={{
+                    color: account.balance > 0 ? "#009100" : "#d00000",
+                  }}
+                >
+                  {numeral(balance).format("$#,#.##")}
+                </Title>
+                {account.type === "creditCard" && (
+                  <>
+                    <Paragraph>
+                      {numeral(creditCards[account.id].limit + balance).format(
+                        "$#,#.##"
+                      )}
+                    </Paragraph>
+                  </>
+                )}
+              </Card.Content>
+            </Card>
+          );
+        })}
       </ScrollView>
       <FABButton />
-    </>
+    </SafeAreaView>
   );
 }

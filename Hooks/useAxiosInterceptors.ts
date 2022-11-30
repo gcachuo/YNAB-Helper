@@ -1,14 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import Toast from "react-native-root-toast";
 import Constants from "expo-constants";
-import accessToken from "../accesstoken.env";
+import accessTokenENV from "../accesstoken.env";
 
 export default function useAxiosInterceptors() {
+  const [accessToken] = useState(accessTokenENV);
+
   useEffect(() => {
     const requestInterceptor = axios.interceptors.request.use(
       async (request) => {
-        console.info("Start:", request.method?.toUpperCase(), request.url);
+        // console.info("Start:", request.method?.toUpperCase(), request.url);
 
         if (request.url?.includes("https://")) {
           request.baseURL = "";
@@ -17,16 +19,18 @@ export default function useAxiosInterceptors() {
 
         const baseUrl =
           Constants.manifest?.extra?.BASE_URL[Constants.manifest?.extra?.ENV];
-        if (baseUrl) {
-          request.baseURL = baseUrl;
-          request.headers = request.headers || {};
-          if (accessToken) {
-            request.headers.Authorization = `Bearer ${accessToken}`;
-            return request;
-          }
+
+        if (!baseUrl || !accessToken) {
+          throw new axios.Cancel(
+            `Missing properties. [baseUrl: ${baseUrl}] [accessToken: ${accessToken}]`
+          );
         }
 
-        return null;
+        request.baseURL = baseUrl;
+        request.headers = request.headers || {};
+        request.headers.Authorization = `Bearer ${accessToken}`;
+
+        return request;
       }
     );
 
