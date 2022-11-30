@@ -6,7 +6,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import useAxiosInterceptors from "./Hooks/useAxiosInterceptors";
 import Cuentas from "./Screen/Cuentas";
 import Presupuesto from "./Screen/Presupuesto";
+import Movimientos from "./Screen/Movimientos";
 import NuevoMovimiento from "./Screen/Movimientos/NuevoMovimiento";
+import "moment/locale/es-mx";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -41,6 +43,7 @@ function DrawerNavigator() {
     <Drawer.Navigator>
       <Drawer.Screen name="Cuentas" component={Cuentas} />
       <Drawer.Screen name="Presupuesto" component={Presupuesto} />
+      <Drawer.Screen name="Movimientos" component={Movimientos} />
     </Drawer.Navigator>
   );
 }

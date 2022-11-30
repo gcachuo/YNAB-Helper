@@ -1,12 +1,14 @@
+import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Surface, TextInput, Title } from "react-native-paper";
-import BudgetsAPI, { IAccounts, ICategory } from "../../API/Budgets";
-import { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
-import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-root-toast";
-import DateTimePickerComponent from "../../Components/DateTimePickerComponent";
+
+import { useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
+
+import BudgetsAPI, { IAccounts, ICategory } from "../../API/Budgets";
+import DateTimePickerComponent from "../../Components/DateTimePickerComponent";
 
 export default function NuevoMovimiento(props: {
   route?: { params?: { accountId?: string } };
@@ -32,7 +34,7 @@ export default function NuevoMovimiento(props: {
       ? transaction.amount * 1000
       : transaction.amount;
     BudgetsAPI.Transactions(transaction)
-      .then(() => {
+      .then((result) => {
         navigation.navigate("Cuentas", { cache: false });
       })
       .catch((error) => {

@@ -31,6 +31,27 @@ export interface IMonth {
   to_be_budgeted: number;
 }
 
+export interface ITransaction {
+  account_id: string;
+  account_name: string;
+  amount: number;
+  approved:boolean;
+  category_id:string;
+  category_name:string;
+  cleared:'cleared'|'uncleared';
+  date:string;
+  deleted:boolean;
+  flag_color:null;
+  id:string;
+  import_id:string|null;
+  memo:string;
+  payee_id:string;
+  payee_name:string;
+  subtransactions:[];
+  transfer_account_id:string;
+  transfer_transaction_id:string;
+}
+
 async function getFromCache<T>(uri: string, enable: boolean = true) {
   let response: AxiosResponse<ApiResponse<T>>;
 
@@ -78,14 +99,38 @@ export default class BudgetsAPI {
     return response.data.data.month;
   }
 
+  static async Transactions(
+    transaction: undefined,
+    cache: boolean
+  ): Promise<ITransaction[]>;
   static async Transactions(transaction: {
     accountId: string;
     amount: number;
     categoryId: string;
     payeeId: string;
     payeeName: string;
-  }) {
+  }): Promise<void>;
+  static async Transactions(
+    transaction?: {
+      accountId: string;
+      amount: number;
+      categoryId: string;
+      payeeId: string;
+      payeeName: string;
+    },
+    cache: boolean = true
+  ): Promise<void | ITransaction[]> {
     const uri = `budgets/${this.budgetId}/transactions`;
+
+    if (!transaction) {
+      const response = await getFromCache<{ transactions: ITransaction[] }>(
+        uri + "?since_date=" + moment(moment().startOf('month')).format('YYYY-MM-DD'),
+        cache
+      );
+      // console.log(response.data.data.transactions);
+      return response.data.data.transactions;
+    }
+
     const response = (await axios.post(uri, {
       transaction: {
         date: moment().format("YYYY-MM-DD"),
@@ -103,6 +148,6 @@ export default class BudgetsAPI {
         transaction: { id: string };
       }>
     >;
-    console.log(response.data.data.transaction);
+    // console.log(response.data.data.transaction);
   }
 }
