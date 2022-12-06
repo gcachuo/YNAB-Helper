@@ -18,13 +18,13 @@ export default function Presupuesto() {
   );
 
   function onRefresh() {
-    setRefresh(true);
     fetchBudget();
     fetchCash();
   }
 
   function fetchBudget() {
-    BudgetsAPI.Categories()
+    setRefresh(true);
+    BudgetsAPI.Categories(false)
       .then((value) => {
         value = value.filter((item) => !item.hidden && !item.deleted);
 
@@ -36,7 +36,7 @@ export default function Presupuesto() {
   }
 
   function fetchCash() {
-    BudgetsAPI.Months()
+    BudgetsAPI.Months(false)
       .then((value) => {
         setMonth(value);
       })

@@ -30,10 +30,15 @@ export default function NuevoMovimiento(props: {
 
   async function saveTransaction() {
     setLoading(true);
-    transaction.amount = transaction.amount
-      ? transaction.amount * 1000
-      : transaction.amount;
-    BudgetsAPI.Transactions(transaction)
+    BudgetsAPI.Transactions({
+      accountId: transaction.accountId,
+      amount: transaction.amount
+        ? Math.trunc(transaction.amount * 1000)
+        : transaction.amount,
+      categoryId: transaction.categoryId,
+      payeeId: transaction.payeeId,
+      payeeName: transaction.payeeName,
+    })
       .then((result) => {
         navigation.goBack();
       })
@@ -111,12 +116,16 @@ export default function NuevoMovimiento(props: {
             keyboardType={"numeric"}
             value={transaction.amount?.toString()}
             onChangeText={(text) => {
-              transaction.amount =
-                text && !isNaN(+text)
-                  ? type === "plus"
-                    ? Math.abs(+text)
-                    : -Math.abs(+text)
-                  : 0;
+              // @ts-ignore
+              transaction.amount = text;
+              if (text.substring(text.length - 1) !== ".") {
+                transaction.amount =
+                  text && !isNaN(+text)
+                    ? type === "plus"
+                      ? Math.abs(+text)
+                      : -Math.abs(+text)
+                    : 0;
+              }
               setTransaction({ ...transaction });
             }}
           />

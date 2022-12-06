@@ -79,10 +79,10 @@ export default class BudgetsAPI {
     return response.data.data.accounts;
   }
 
-  static async Categories() {
+  static async Categories(cache=true) {
     const uri = `budgets/${this.budgetId}/categories`;
 
-    const response = await getFromCache<{ category_groups: ICategory[] }>(uri);
+    const response = await getFromCache<{ category_groups: ICategory[] }>(uri,cache);
 
     // console.log(response.data.data.category_groups);
     // console.log(response.data.data.category_groups[0].categories);
@@ -90,11 +90,11 @@ export default class BudgetsAPI {
     return response.data.data.category_groups;
   }
 
-  static async Months() {
+  static async Months(cache=true) {
     const month = `current`;
     const uri = `budgets/${this.budgetId}/months/${month}`;
 
-    const response = await getFromCache<{ month: IMonth }>(uri);
+    const response = await getFromCache<{ month: IMonth }>(uri,cache);
 
     return response.data.data.month;
   }
