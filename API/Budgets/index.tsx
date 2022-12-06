@@ -35,21 +35,21 @@ export interface ITransaction {
   account_id: string;
   account_name: string;
   amount: number;
-  approved:boolean;
-  category_id:string;
-  category_name:string;
-  cleared:'cleared'|'uncleared';
-  date:string;
-  deleted:boolean;
-  flag_color:null;
-  id:string;
-  import_id:string|null;
-  memo:string;
-  payee_id:string;
-  payee_name:string;
-  subtransactions:[];
-  transfer_account_id:string;
-  transfer_transaction_id:string;
+  approved: boolean;
+  category_id: string;
+  category_name: string;
+  cleared: "cleared" | "uncleared";
+  date: string;
+  deleted: boolean;
+  flag_color: null;
+  id: string;
+  import_id: string | null;
+  memo: string;
+  payee_id: string;
+  payee_name: string;
+  subtransactions: [];
+  transfer_account_id: string;
+  transfer_transaction_id: string;
 }
 
 async function getFromCache<T>(uri: string, enable: boolean = true) {
@@ -79,10 +79,13 @@ export default class BudgetsAPI {
     return response.data.data.accounts;
   }
 
-  static async Categories(cache=true) {
+  static async Categories(cache = true) {
     const uri = `budgets/${this.budgetId}/categories`;
 
-    const response = await getFromCache<{ category_groups: ICategory[] }>(uri,cache);
+    const response = await getFromCache<{ category_groups: ICategory[] }>(
+      uri,
+      cache
+    );
 
     // console.log(response.data.data.category_groups);
     // console.log(response.data.data.category_groups[0].categories);
@@ -90,11 +93,11 @@ export default class BudgetsAPI {
     return response.data.data.category_groups;
   }
 
-  static async Months(cache=true) {
+  static async Months(cache = true) {
     const month = `current`;
     const uri = `budgets/${this.budgetId}/months/${month}`;
 
-    const response = await getFromCache<{ month: IMonth }>(uri,cache);
+    const response = await getFromCache<{ month: IMonth }>(uri, cache);
 
     return response.data.data.month;
   }
@@ -104,6 +107,7 @@ export default class BudgetsAPI {
     cache: boolean
   ): Promise<ITransaction[]>;
   static async Transactions(transaction: {
+    date?: string;
     accountId: string;
     amount: number;
     categoryId: string;
@@ -112,6 +116,7 @@ export default class BudgetsAPI {
   }): Promise<void>;
   static async Transactions(
     transaction?: {
+      date?: string;
       accountId: string;
       amount: number;
       categoryId: string;
@@ -124,7 +129,9 @@ export default class BudgetsAPI {
 
     if (!transaction) {
       const response = await getFromCache<{ transactions: ITransaction[] }>(
-        uri + "?since_date=" + moment(moment().startOf('month')).format('YYYY-MM-DD'),
+        uri +
+          "?since_date=" +
+          moment(moment().startOf("month")).format("YYYY-MM-DD"),
         cache
       );
       // console.log(response.data.data.transactions);
@@ -133,7 +140,7 @@ export default class BudgetsAPI {
 
     const response = (await axios.post(uri, {
       transaction: {
-        date: moment().format("YYYY-MM-DD"),
+        date: transaction.date ?? moment().format("YYYY-MM-DD"),
         account_id: transaction.accountId,
         amount: transaction.amount,
         category_id: transaction.categoryId,

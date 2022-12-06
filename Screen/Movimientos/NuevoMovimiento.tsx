@@ -3,15 +3,17 @@ import { ScrollView, View } from "react-native";
 import { Button, Surface, TextInput, Title } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
 import Toast from "react-native-root-toast";
+import uuid from "react-native-uuid";
 
 import { useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 
 import BudgetsAPI, { IAccounts, ICategory } from "../../API/Budgets";
 import DateTimePickerComponent from "../../Components/DateTimePickerComponent";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function NuevoMovimiento(props: {
-  route?: { params?: { accountId?: string } };
+  route?: { params?: { accountId?: string; pending?: boolean } };
 }) {
   const [transaction, setTransaction] = useState({
     accountId: props.route?.params?.accountId,
@@ -27,10 +29,12 @@ export default function NuevoMovimiento(props: {
   const navigation = useNavigation() as DrawerNavigationProp<any>;
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState("minus");
+  const [selectedDate, setSelectedDate] = useState("");
 
   async function saveTransaction() {
     setLoading(true);
-    BudgetsAPI.Transactions({
+
+    const newTransaction = {
       accountId: transaction.accountId,
       amount: transaction.amount
         ? Math.trunc(transaction.amount * 1000)
@@ -38,16 +42,43 @@ export default function NuevoMovimiento(props: {
       categoryId: transaction.categoryId,
       payeeId: transaction.payeeId,
       payeeName: transaction.payeeName,
-    })
-      .then((result) => {
-        navigation.goBack();
+    };
+
+    if (props.route?.params?.pending) {
+      const key = "@pending-transactions";
+      let pendingTransactions: {}[] = JSON.parse(
+        (await AsyncStorage.getItem(key)) || "[]"
+      );
+      pendingTransactions = [
+        { key: uuid.v4(), ...newTransaction },
+        ...pendingTransactions,
+      ];
+      AsyncStorage.setItem(key, JSON.stringify(pendingTransactions))
+        .then((result) => {
+          navigation.goBack();
+        })
+        .catch((error) => {
+          console.error(error);
+          Toast.show(error.response.data.error.detail);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      BudgetsAPI.Transactions({
+        date: selectedDate,
+        ...newTransaction,
       })
-      .catch((error) => {
-        Toast.show(error.response.data.error.detail);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+        .then((result) => {
+          navigation.goBack();
+        })
+        .catch((error) => {
+          Toast.show(error.response.data.error.detail);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   }
 
   useEffect(() => {
@@ -68,7 +99,7 @@ export default function NuevoMovimiento(props: {
       <Surface style={{ padding: 20, backgroundColor: "white" }}>
         <View style={{ marginBottom: 20 }}>
           <Title>Fecha</Title>
-          <DateTimePickerComponent />
+          <DateTimePickerComponent setDate={setSelectedDate} />
         </View>
         <View style={{ marginBottom: 20 }}>
           <TextInput

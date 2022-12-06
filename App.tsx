@@ -9,6 +9,7 @@ import Presupuesto from "./Screen/Presupuesto";
 import Movimientos from "./Screen/Movimientos";
 import NuevoMovimiento from "./Screen/Movimientos/NuevoMovimiento";
 import "moment/locale/es-mx";
+import Pendientes from "./Screen/Pendientes";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -44,6 +45,7 @@ function DrawerNavigator() {
       <Drawer.Screen name="Cuentas" component={Cuentas} />
       <Drawer.Screen name="Presupuesto" component={Presupuesto} />
       <Drawer.Screen name="Movimientos" component={Movimientos} />
+      <Drawer.Screen name="Pendientes" component={Pendientes} />
     </Drawer.Navigator>
   );
 }

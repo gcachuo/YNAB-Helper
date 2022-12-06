@@ -4,13 +4,15 @@ import { FAB } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 
-export default function FABComponent() {
+export default function FABComponent(props: { pending?: boolean }) {
   const navigation = useNavigation() as DrawerNavigationProp<any>;
   return (
     <FAB
       icon="plus"
       style={styles.fab}
-      onPress={() => navigation.navigate("NuevoMovimiento")}
+      onPress={() =>
+        navigation.navigate("NuevoMovimiento", { pending: props.pending })
+      }
     />
   );
 }
