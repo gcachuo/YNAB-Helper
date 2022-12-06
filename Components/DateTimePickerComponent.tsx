@@ -8,6 +8,7 @@ import moment from "moment";
 
 export default function DateTimePickerComponent(props: {
   setDate: (date: string) => void;
+  maximumDate?: Date;
 }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -35,7 +36,7 @@ export default function DateTimePickerComponent(props: {
           <Button
             onPress={() => {
               DateTimePickerAndroid.open({
-                maximumDate: new Date(),
+                maximumDate: props.maximumDate,
                 value: selectedDate,
                 onChange(value) {
                   setSelectedDate(moment(value.nativeEvent.timestamp).toDate());

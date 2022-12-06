@@ -34,7 +34,20 @@ export default function NuevoMovimiento(props: {
   async function saveTransaction() {
     setLoading(true);
 
+    if (!transaction.payeeName) {
+      Toast.show("Ingrese beneficiario");
+      setLoading(false);
+      return;
+    }
+
+    if (!transaction.amount) {
+      Toast.show("Ingrese cantidad");
+      setLoading(false);
+      return;
+    }
+
     const newTransaction = {
+      date: selectedDate,
       accountId: transaction.accountId,
       amount: transaction.amount
         ? Math.trunc(transaction.amount * 1000)
@@ -65,10 +78,7 @@ export default function NuevoMovimiento(props: {
           setLoading(false);
         });
     } else {
-      BudgetsAPI.Transactions({
-        date: selectedDate,
-        ...newTransaction,
-      })
+      BudgetsAPI.Transactions(newTransaction)
         .then((result) => {
           navigation.goBack();
         })
@@ -99,7 +109,10 @@ export default function NuevoMovimiento(props: {
       <Surface style={{ padding: 20, backgroundColor: "white" }}>
         <View style={{ marginBottom: 20 }}>
           <Title>Fecha</Title>
-          <DateTimePickerComponent setDate={setSelectedDate} />
+          <DateTimePickerComponent
+            setDate={setSelectedDate}
+            maximumDate={props.route?.params?.pending ? undefined : new Date()}
+          />
         </View>
         <View style={{ marginBottom: 20 }}>
           <TextInput
