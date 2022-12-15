@@ -1,7 +1,7 @@
-import { Alert, RefreshControl, ScrollView } from "react-native";
+import { Alert, RefreshControl, ScrollView, View } from "react-native";
 import { DataTable, Paragraph, Title } from "react-native-paper";
 import FABComponent from "../../Components/FABComponent";
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import numeral from "numeral";
@@ -28,23 +28,27 @@ export default function Pendientes() {
   );
   const [refresh, setRefresh] = useState(false);
   const [current, setCurrent] = useState({} as IMonth);
+  const [lowest, setLowest] = useState(0);
 
   useFocusEffect(
     useCallback(() => {
       onRefresh();
-      BudgetsAPI.Months(false).then((value) => {
-        setCurrent(value);
-      });
     }, [])
   );
 
   function onRefresh() {
     (async () => {
+      setRefresh(true);
       const key = "@pending-transactions";
       let pendingTransactions: IPendingTransaction[] = JSON.parse(
         (await AsyncStorage.getItem(key)) || "[]"
       );
       setPending(pendingTransactions);
+      BudgetsAPI.Months(false).then((value) => {
+        setCurrent(value);
+        setLowest(value.to_be_budgeted);
+      });
+      setRefresh(false);
     })();
   }
 
@@ -57,9 +61,17 @@ export default function Pendientes() {
           <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
         }
       >
-        <Title style={{ marginVertical: 20 }}>
-          {numeral(current.to_be_budgeted / 1000).format("$#,#.##")}
-        </Title>
+        <View style={{ marginVertical: 20 }}>
+          <Title>
+            Inicial:
+            &nbsp;
+            {numeral(current.to_be_budgeted / 1000).format("$#,#.##")}
+          </Title>
+          <Title>
+            Disponible:
+            &nbsp;
+            {numeral(lowest / 1000).format("$#,#.##")}</Title>
+        </View>
         <DataTable>
           <DataTable.Header>
             <DataTable.Title>Fecha</DataTable.Title>
@@ -84,6 +96,9 @@ export default function Pendientes() {
                 payeeName?: string;
               }) => {
                 total += transaction.amount || 0;
+                if (total < lowest) {
+                  setLowest(total);
+                }
                 return (
                   <DataTable.Row
                     key={transaction.key}
